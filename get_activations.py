@@ -5,10 +5,97 @@ import mujoco
 import mujoco.viewer
 import time
 import desired_kinematic as dsk
-import compute_activation as ca
+
 import force_length_velocity_functions as flv
 import os
+import numpy as np
+from scipy.optimize import minimize
 
+def solve_tendon_forces(RT, tau):
+    m = RT.shape[1]
+    def obj(F): return np.sum(F**2)
+    cons = {'type': 'eq', 'fun': lambda F: RT @ F - tau}
+    min_force = 0
+    bounds = [(min_force, None)] * m
+    F0_guess = np.ones(m)
+    res = minimize(obj, F0_guess, constraints=cons, bounds=bounds)
+    if res.success:
+        return res.x
+    else:
+        raise RuntimeError('QP solver failed')
+
+def invert_flv(F_desired, FL, FV, FP, F0):
+    a = np.zeros_like(F_desired)
+    valid_indices = (FL > 0) & (FV > 0)
+    a[valid_indices] = (F_desired[valid_indices] / F0[valid_indices] - FP[valid_indices]) / (FL[valid_indices] * FV[valid_indices])
+    return np.clip(a, 0, 1)
+
+
+def fill_actuator_moments(num_muscles, num_joints,actuator_moments):
+
+    if num_joints == 8:
+        muscle_joint_map = [
+            [0, 1],    # muscle 0 → joints 0,1
+            [0],       # muscle 1 → joint 0
+            [0, 1],    # muscle 2 → joints 0,1
+            [2, 3],    # muscle 3 → joints 2,3
+            [2],       # muscle 4 → joint 2
+            [2, 3],    # muscle 5 → joints 2,3
+            [4, 5],    # muscle 6 → joints 4,5
+            [4],       # muscle 7 → joint 4
+            [4, 5],    # muscle 8 → joints 4,5
+            [6, 7],    # muscle 9 → joints 6,7
+            [6],       # muscle 10 → joint 6
+            [6, 7],    # muscle 11 → joints 6,7
+        ]
+    elif num_joints == 9:
+        muscle_joint_map = [
+        [1, 2],    # muscle 0 → joints 1,2
+        [1],       # muscle 1 → joint 1
+        [1, 2],    # muscle 2 → joints 1,2
+        [3, 4],    # muscle 3 → joints 3,4
+        [3],       # muscle 4 → joint 3
+        [3, 4],    # muscle 5 → joints 3,4
+        [5, 6],    # muscle 6 → joints 5,6
+        [5],       # muscle 7 → joint 5
+        [5, 6],    # muscle 8 → joints 5,6
+        [7, 8],    # muscle 9 → joints 7,8
+        [7],       # muscle 10 → joint 7
+        [7, 8],    # muscle 11 → joints 7,8
+    ] 
+    elif num_joints == 10:
+        muscle_joint_map = [
+        [2, 3],    # muscle 0 → joints 2,3
+        [2],       # muscle 1 → joint 2
+        [2, 3],    # muscle 2 → joints 2,3
+        [4, 5],    # muscle 3 → joints 4,5
+        [4],       # muscle 4 → joint 4
+        [4, 5],    # muscle 5 → joints 4,5
+        [6, 7],    # muscle 6 → joints 6,7
+        [6],       # muscle 7 → joint 6
+        [6, 7],    # muscle 8 → joints 6,7
+        [8, 9],    # muscle 9 → joints 8,9
+        [8],       # muscle 10 → joint 8
+        [8, 9],    # muscle 11 → joints 8,9
+    ]
+    else:
+        raise ValueError("Unsupported number of joints. Created a new muscle_joint_map for this number of joints.")
+
+
+    
+    moment_matrix = np.zeros((num_muscles, num_joints))
+    nonzero_values = actuator_moments[actuator_moments != 0]
+    counter = 0
+
+    for muscle_idx, joint_indices in enumerate(muscle_joint_map):
+        for joint_idx in joint_indices:
+            if counter < len(nonzero_values):
+                moment_matrix[muscle_idx, joint_idx] = nonzero_values[counter]
+                counter += 1
+            else:
+                break  # all values used
+
+    return moment_matrix
 
 def compute_and_save_activations(model_path, omega, dt, duration_in_seconds,activation_folder):
     """
@@ -35,7 +122,7 @@ def compute_and_save_activations(model_path, omega, dt, duration_in_seconds,acti
 
     # Initialize variables
     n_steps = all_qpos.shape[0]
-    n_joints = all_qpos.shape[1]
+    n_joints = len(model.dof_jntid)
     n_muscles = model.nu
 
     # joint_torques = np.zeros((n_steps, n_joints))
@@ -46,15 +133,17 @@ def compute_and_save_activations(model_path, omega, dt, duration_in_seconds,acti
 
     # Compute activations
     for t in range(n_steps):
-        data.qpos[:] = all_qpos[t, :]
-        data.qvel[:] = all_qvel[t, :]
-        data.qacc[:] = all_qacc[t, :]
+        data.qpos[-8:] = all_qpos[t, :]
+        data.qvel[-8:] = all_qvel[t, :]
+        data.qacc[-8:] = all_qacc[t, :]
 
         mujoco.mj_inverse(model, data)
 
         joint_torque = data.qfrc_inverse
         actuator_moment_values = data.actuator_moment
-        moment_matrix = ca.fill_actuator_moments(n_muscles, n_joints, actuator_moment_values)
+
+        moment_matrix = fill_actuator_moments(n_muscles, n_joints, actuator_moment_values)
+        print(f"Moment matrix at time step {t}:\n{moment_matrix}")
         actuator_moments_transpose = moment_matrix.T
 
         L_t = data.actuator_length
@@ -64,7 +153,7 @@ def compute_and_save_activations(model_path, omega, dt, duration_in_seconds,acti
         FP_t = np.array([flv.compute_FP(L) for L in L_t])
         FV_t = np.array([flv.compute_FV(V) for V in V_t])
 
-        F_t = ca.solve_tendon_forces(actuator_moments_transpose, joint_torque)
+        F_t = solve_tendon_forces(actuator_moments_transpose, joint_torque)
         # a_t = ca.invert_flv(F_t, FL_t, FV_t, FP_t, F0)
 
         a_t = F_t / F0
