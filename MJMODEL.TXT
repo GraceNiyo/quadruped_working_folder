@@ -2,18 +2,18 @@ MuJoCo version 3.3.0
 model name     cheetah
 
 MEMORY
-  total         522.7 KB
+  total         523.4 KB
   textures      488.6 KB
 
 SIZES
-  nq                  8
-  nv                  8
+  nq                  10
+  nv                  10
   nu                  12
   na                  12
   nbody               10
   nbvh                32
   nbvhstatic          32
-  njnt                8
+  njnt                10
   ngeom               21
   nsite               52
   ncam                1
@@ -25,20 +25,20 @@ SIZES
   nwrap               52
   nsensor             4
   nuser_geom          1
-  nnames              1162
+  nnames              1174
   npaths              1
-  nnames_map          252
-  nM                  12
-  nB                  32
-  nC                  12
-  nD                  16
-  nJmom               96
-  ntree               4
+  nnames_map          256
+  nM                  31
+  nB                  52
+  nC                  31
+  nD                  52
+  nJmom               120
+  ntree               1
   njmax               -1
   nconmax             -1
   nsensordata         4
   narena              6291456
-  nbuffer             540929
+  nbuffer             542145
 
 OPTION
   timestep            0.005   
@@ -71,18 +71,18 @@ OPTION
   o_solimp            0.9       0.95      0.001     0.5       2        
   o_friction          1         1         0.005     0.0001    0.0001   
 
-totalmass             20      
+totalmass             4.1     
 
 STATISTIC
-  meaninertia         0.16    
-  meanmass            2.2     
+  meaninertia         0.91    
+  meanmass            0.45    
   meansize            0.29    
   extent              8       
   center              0        0        0       
 
-qpos0                 0         0         0         0         0         0         0         0        
+qpos0                 0         0         0         0         0         0         0         0         0         0        
 
-qpos_spring           0         0         0         0         0         0         0         0        
+qpos_spring           0         0         0         0         0         0         0         0         0         0        
 
 
 BODY 0:
@@ -105,7 +105,7 @@ BODY 0:
   body_ipos             0         0         0        
   body_iquat            1         0         0         0        
   body_mass             0        
-  body_subtreemass      20       
+  body_subtreemass      4.1      
   body_inertia          0         0         0        
   body_invweight0       0         0        
   body_gravcomp         0        
@@ -120,25 +120,25 @@ BODY 1:
   name                  torso
   body_parentid         0 
   body_rootid           1 
-  body_weldid           0 
+  body_weldid           1 
   body_mocapid          -1 
-  body_jntnum           0 
-  body_jntadr           -1 
-  body_dofnum           0 
-  body_dofadr           -1 
-  body_treeid           -1 
+  body_jntnum           2 
+  body_jntadr           0 
+  body_dofnum           2 
+  body_dofadr           0 
+  body_treeid           0 
   body_geomnum          4 
   body_geomadr          1 
   body_simple           0 
   body_sameframe        0 
-  body_pos              0         0         0.7      
+  body_pos              0         0         0.5      
   body_quat             1         0         0         0        
-  body_ipos             0.0035    0         0.001    
-  body_iquat            0         0.7       0         0.71     
-  body_mass             13       
-  body_subtreemass      20       
-  body_inertia          1.3       1.1       0.27     
-  body_invweight0       0         0        
+  body_ipos             0.017     0         0.0049   
+  body_iquat            0         0.7       0         0.72     
+  body_mass             2.6      
+  body_subtreemass      4.1      
+  body_inertia          0.29      0.24      0.056    
+  body_invweight0       0.17      0        
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -154,9 +154,9 @@ BODY 2:
   body_weldid           2 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           0 
+  body_jntadr           2 
   body_dofnum           1 
-  body_dofadr           0 
+  body_dofadr           2 
   body_treeid           0 
   body_geomnum          2 
   body_geomadr          5 
@@ -166,10 +166,10 @@ BODY 2:
   body_quat             1         0         0         0        
   body_ipos            -0.039     0        -0.066    
   body_iquat            0.68      0.18      0.18      0.68     
-  body_mass             0.99     
-  body_subtreemass      1.9      
-  body_inertia          0.011     0.011     0.0015   
-  body_invweight0       0.0095    1.6      
+  body_mass             0.2      
+  body_subtreemass      0.38     
+  body_inertia          0.0022    0.0022    0.00031  
+  body_invweight0       0.18      2.8      
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -185,9 +185,9 @@ BODY 3:
   body_weldid           3 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           1 
+  body_jntadr           3 
   body_dofnum           1 
-  body_dofadr           1 
+  body_dofadr           3 
   body_treeid           0 
   body_geomnum          2 
   body_geomadr          7 
@@ -197,10 +197,10 @@ BODY 3:
   body_quat             1         0         0         0        
   body_ipos             0.033     0        -0.046    
   body_iquat            0.67     -0.21     -0.21      0.67     
-  body_mass             0.9      
-  body_subtreemass      0.9      
-  body_inertia          0.0071    0.0069    0.0014   
-  body_invweight0       0.16      4.2      
+  body_mass             0.18     
+  body_subtreemass      0.18     
+  body_inertia          0.0014    0.0014    0.00029  
+  body_invweight0       0.4       5.9      
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -216,10 +216,10 @@ BODY 4:
   body_weldid           4 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           2 
+  body_jntadr           4 
   body_dofnum           1 
-  body_dofadr           2 
-  body_treeid           1 
+  body_dofadr           4 
+  body_treeid           0 
   body_geomnum          2 
   body_geomadr          9 
   body_simple           0 
@@ -228,10 +228,10 @@ BODY 4:
   body_quat             1         0         0         0        
   body_ipos            -0.039     0        -0.066    
   body_iquat            0.68      0.18      0.18      0.68     
-  body_mass             0.99     
-  body_subtreemass      1.9      
-  body_inertia          0.011     0.011     0.0015   
-  body_invweight0       0.0095    1.6      
+  body_mass             0.2      
+  body_subtreemass      0.38     
+  body_inertia          0.0022    0.0022    0.00031  
+  body_invweight0       0.18      2.8      
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -247,10 +247,10 @@ BODY 5:
   body_weldid           5 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           3 
+  body_jntadr           5 
   body_dofnum           1 
-  body_dofadr           3 
-  body_treeid           1 
+  body_dofadr           5 
+  body_treeid           0 
   body_geomnum          2 
   body_geomadr          11 
   body_simple           0 
@@ -259,10 +259,10 @@ BODY 5:
   body_quat             1         0         0         0        
   body_ipos             0.033     0        -0.046    
   body_iquat            0.67     -0.21     -0.21      0.67     
-  body_mass             0.9      
-  body_subtreemass      0.9      
-  body_inertia          0.0071    0.0069    0.0014   
-  body_invweight0       0.16      4.2      
+  body_mass             0.18     
+  body_subtreemass      0.18     
+  body_inertia          0.0014    0.0014    0.00029  
+  body_invweight0       0.4       5.9      
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -278,10 +278,10 @@ BODY 6:
   body_weldid           6 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           4 
+  body_jntadr           6 
   body_dofnum           1 
-  body_dofadr           4 
-  body_treeid           2 
+  body_dofadr           6 
+  body_treeid           0 
   body_geomnum          2 
   body_geomadr          13 
   body_simple           0 
@@ -290,10 +290,10 @@ BODY 6:
   body_quat             1         0         0         0        
   body_ipos            -0.039     0        -0.066    
   body_iquat            0.68      0.18      0.18      0.68     
-  body_mass             0.99     
-  body_subtreemass      1.9      
-  body_inertia          0.011     0.011     0.0015   
-  body_invweight0       0.0095    1.6      
+  body_mass             0.2      
+  body_subtreemass      0.38     
+  body_inertia          0.0022    0.0022    0.00031  
+  body_invweight0       0.18      2.8      
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -309,10 +309,10 @@ BODY 7:
   body_weldid           7 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           5 
+  body_jntadr           7 
   body_dofnum           1 
-  body_dofadr           5 
-  body_treeid           2 
+  body_dofadr           7 
+  body_treeid           0 
   body_geomnum          2 
   body_geomadr          15 
   body_simple           0 
@@ -321,10 +321,10 @@ BODY 7:
   body_quat             1         0         0         0        
   body_ipos             0.033     0        -0.046    
   body_iquat            0.67     -0.21     -0.21      0.67     
-  body_mass             0.9      
-  body_subtreemass      0.9      
-  body_inertia          0.0071    0.0069    0.0014   
-  body_invweight0       0.16      4.2      
+  body_mass             0.18     
+  body_subtreemass      0.18     
+  body_inertia          0.0014    0.0014    0.00029  
+  body_invweight0       0.4       5.9      
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -340,10 +340,10 @@ BODY 8:
   body_weldid           8 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           6 
+  body_jntadr           8 
   body_dofnum           1 
-  body_dofadr           6 
-  body_treeid           3 
+  body_dofadr           8 
+  body_treeid           0 
   body_geomnum          2 
   body_geomadr          17 
   body_simple           0 
@@ -352,10 +352,10 @@ BODY 8:
   body_quat             1         0         0         0        
   body_ipos            -0.039     0        -0.066    
   body_iquat            0.68      0.18      0.18      0.68     
-  body_mass             0.99     
-  body_subtreemass      1.9      
-  body_inertia          0.011     0.011     0.0015   
-  body_invweight0       0.0095    1.6      
+  body_mass             0.2      
+  body_subtreemass      0.38     
+  body_inertia          0.0022    0.0022    0.00031  
+  body_invweight0       0.18      2.8      
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -371,10 +371,10 @@ BODY 9:
   body_weldid           9 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           7 
+  body_jntadr           9 
   body_dofnum           1 
-  body_dofadr           7 
-  body_treeid           3 
+  body_dofadr           9 
+  body_treeid           0 
   body_geomnum          2 
   body_geomadr          19 
   body_simple           0 
@@ -383,10 +383,10 @@ BODY 9:
   body_quat             1         0         0         0        
   body_ipos             0.033     0        -0.046    
   body_iquat            0.67     -0.21     -0.21      0.67     
-  body_mass             0.9      
-  body_subtreemass      0.9      
-  body_inertia          0.0071    0.0069    0.0014   
-  body_invweight0       0.16      4.2      
+  body_mass             0.18     
+  body_subtreemass      0.18     
+  body_inertia          0.0014    0.0014    0.00029  
+  body_invweight0       0.4       5.9      
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -397,10 +397,48 @@ BODY 9:
 
 
 JOINT 0:
-  name                  rbthigh
-  jnt_type              3 
+  name                  rootx
+  jnt_type              2 
   jnt_qposadr           0 
   jnt_dofadr            0 
+  jnt_bodyid            1 
+  jnt_group             0 
+  jnt_limited           0 
+  jnt_actfrclimited     0 
+  jnt_actgravcomp       0 
+  jnt_solref            0.02      1        
+  jnt_solimp            0         0.8       0.03      0.5       2        
+  jnt_pos               0         0         0        
+  jnt_axis              1         0         0        
+  jnt_stiffness         0        
+  jnt_range             0         0        
+  jnt_actfrcrange       0         0        
+  jnt_margin            0        
+
+JOINT 1:
+  name                  rootz
+  jnt_type              2 
+  jnt_qposadr           1 
+  jnt_dofadr            1 
+  jnt_bodyid            1 
+  jnt_group             0 
+  jnt_limited           0 
+  jnt_actfrclimited     0 
+  jnt_actgravcomp       0 
+  jnt_solref            0.02      1        
+  jnt_solimp            0         0.8       0.03      0.5       2        
+  jnt_pos               0         0         0        
+  jnt_axis              0         0         1        
+  jnt_stiffness         0        
+  jnt_range             0         0        
+  jnt_actfrcrange       0         0        
+  jnt_margin            0        
+
+JOINT 2:
+  name                  rbthigh
+  jnt_type              3 
+  jnt_qposadr           2 
+  jnt_dofadr            2 
   jnt_bodyid            2 
   jnt_group             0 
   jnt_limited           1 
@@ -415,11 +453,11 @@ JOINT 0:
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 1:
+JOINT 3:
   name                  rbshin
   jnt_type              3 
-  jnt_qposadr           1 
-  jnt_dofadr            1 
+  jnt_qposadr           3 
+  jnt_dofadr            3 
   jnt_bodyid            3 
   jnt_group             0 
   jnt_limited           1 
@@ -434,11 +472,11 @@ JOINT 1:
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 2:
+JOINT 4:
   name                  rfthigh
   jnt_type              3 
-  jnt_qposadr           2 
-  jnt_dofadr            2 
+  jnt_qposadr           4 
+  jnt_dofadr            4 
   jnt_bodyid            4 
   jnt_group             0 
   jnt_limited           1 
@@ -453,11 +491,11 @@ JOINT 2:
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 3:
+JOINT 5:
   name                  rfshin
   jnt_type              3 
-  jnt_qposadr           3 
-  jnt_dofadr            3 
+  jnt_qposadr           5 
+  jnt_dofadr            5 
   jnt_bodyid            5 
   jnt_group             0 
   jnt_limited           1 
@@ -472,11 +510,11 @@ JOINT 3:
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 4:
+JOINT 6:
   name                  lbthigh
   jnt_type              3 
-  jnt_qposadr           4 
-  jnt_dofadr            4 
+  jnt_qposadr           6 
+  jnt_dofadr            6 
   jnt_bodyid            6 
   jnt_group             0 
   jnt_limited           1 
@@ -491,11 +529,11 @@ JOINT 4:
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 5:
+JOINT 7:
   name                  lbshin
   jnt_type              3 
-  jnt_qposadr           5 
-  jnt_dofadr            5 
+  jnt_qposadr           7 
+  jnt_dofadr            7 
   jnt_bodyid            7 
   jnt_group             0 
   jnt_limited           1 
@@ -510,11 +548,11 @@ JOINT 5:
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 6:
+JOINT 8:
   name                  lfthigh
   jnt_type              3 
-  jnt_qposadr           6 
-  jnt_dofadr            6 
+  jnt_qposadr           8 
+  jnt_dofadr            8 
   jnt_bodyid            8 
   jnt_group             0 
   jnt_limited           1 
@@ -529,11 +567,11 @@ JOINT 6:
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 7:
+JOINT 9:
   name                  lfshin
   jnt_type              3 
-  jnt_qposadr           7 
-  jnt_dofadr            7 
+  jnt_qposadr           9 
+  jnt_dofadr            9 
   jnt_bodyid            9 
   jnt_group             0 
   jnt_limited           1 
@@ -550,7 +588,7 @@ JOINT 7:
 
 
 DOF 0:
-  dof_bodyid            2 
+  dof_bodyid            1 
   dof_jntid             0 
   dof_parentid          -1 
   dof_treeid            0 
@@ -559,13 +597,13 @@ DOF 0:
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
   dof_frictionloss      0        
-  dof_armature          0.1      
-  dof_damping           1.5      
-  dof_invweight0        4.9      
-  dof_M0                0.21     
+  dof_armature          0        
+  dof_damping           0        
+  dof_invweight0        0.25     
+  dof_M0                4.1      
 
 DOF 1:
-  dof_bodyid            3 
+  dof_bodyid            1 
   dof_jntid             1 
   dof_parentid          0 
   dof_treeid            0 
@@ -574,16 +612,16 @@ DOF 1:
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
   dof_frictionloss      0        
-  dof_armature          0.1      
-  dof_damping           1        
-  dof_invweight0        9.2      
-  dof_M0                0.11     
+  dof_armature          0        
+  dof_damping           0        
+  dof_invweight0        0.25     
+  dof_M0                4.1      
 
 DOF 2:
-  dof_bodyid            4 
+  dof_bodyid            2 
   dof_jntid             2 
-  dof_parentid          -1 
-  dof_treeid            1 
+  dof_parentid          1 
+  dof_treeid            0 
   dof_Madr              3 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -591,83 +629,113 @@ DOF 2:
   dof_frictionloss      0        
   dof_armature          0.1      
   dof_damping           1.5      
-  dof_invweight0        4.9      
-  dof_M0                0.21     
+  dof_invweight0        8.3      
+  dof_M0                0.12     
 
 DOF 3:
-  dof_bodyid            5 
+  dof_bodyid            3 
   dof_jntid             3 
   dof_parentid          2 
-  dof_treeid            1 
-  dof_Madr              4 
-  dof_simplenum         0 
-  dof_solref            0.02      1        
-  dof_solimp            0.9       0.95      0.001     0.5       2        
-  dof_frictionloss      0        
-  dof_armature          0.1      
-  dof_damping           1        
-  dof_invweight0        9.2      
-  dof_M0                0.11     
-
-DOF 4:
-  dof_bodyid            6 
-  dof_jntid             4 
-  dof_parentid          -1 
-  dof_treeid            2 
+  dof_treeid            0 
   dof_Madr              6 
   dof_simplenum         0 
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
   dof_frictionloss      0        
   dof_armature          0.1      
-  dof_damping           1.5      
-  dof_invweight0        4.9      
-  dof_M0                0.21     
-
-DOF 5:
-  dof_bodyid            7 
-  dof_jntid             5 
-  dof_parentid          4 
-  dof_treeid            2 
-  dof_Madr              7 
-  dof_simplenum         0 
-  dof_solref            0.02      1        
-  dof_solimp            0.9       0.95      0.001     0.5       2        
-  dof_frictionloss      0        
-  dof_armature          0.1      
   dof_damping           1        
-  dof_invweight0        9.2      
-  dof_M0                0.11     
+  dof_invweight0        9.8      
+  dof_M0                0.1      
 
-DOF 6:
-  dof_bodyid            8 
-  dof_jntid             6 
-  dof_parentid          -1 
-  dof_treeid            3 
-  dof_Madr              9 
-  dof_simplenum         0 
-  dof_solref            0.02      1        
-  dof_solimp            0.9       0.95      0.001     0.5       2        
-  dof_frictionloss      0        
-  dof_armature          0.1      
-  dof_damping           1.5      
-  dof_invweight0        4.9      
-  dof_M0                0.21     
-
-DOF 7:
-  dof_bodyid            9 
-  dof_jntid             7 
-  dof_parentid          6 
-  dof_treeid            3 
+DOF 4:
+  dof_bodyid            4 
+  dof_jntid             4 
+  dof_parentid          1 
+  dof_treeid            0 
   dof_Madr              10 
   dof_simplenum         0 
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
   dof_frictionloss      0        
   dof_armature          0.1      
+  dof_damping           1.5      
+  dof_invweight0        8.3      
+  dof_M0                0.12     
+
+DOF 5:
+  dof_bodyid            5 
+  dof_jntid             5 
+  dof_parentid          4 
+  dof_treeid            0 
+  dof_Madr              13 
+  dof_simplenum         0 
+  dof_solref            0.02      1        
+  dof_solimp            0.9       0.95      0.001     0.5       2        
+  dof_frictionloss      0        
+  dof_armature          0.1      
   dof_damping           1        
-  dof_invweight0        9.2      
-  dof_M0                0.11     
+  dof_invweight0        9.8      
+  dof_M0                0.1      
+
+DOF 6:
+  dof_bodyid            6 
+  dof_jntid             6 
+  dof_parentid          1 
+  dof_treeid            0 
+  dof_Madr              17 
+  dof_simplenum         0 
+  dof_solref            0.02      1        
+  dof_solimp            0.9       0.95      0.001     0.5       2        
+  dof_frictionloss      0        
+  dof_armature          0.1      
+  dof_damping           1.5      
+  dof_invweight0        8.3      
+  dof_M0                0.12     
+
+DOF 7:
+  dof_bodyid            7 
+  dof_jntid             7 
+  dof_parentid          6 
+  dof_treeid            0 
+  dof_Madr              20 
+  dof_simplenum         0 
+  dof_solref            0.02      1        
+  dof_solimp            0.9       0.95      0.001     0.5       2        
+  dof_frictionloss      0        
+  dof_armature          0.1      
+  dof_damping           1        
+  dof_invweight0        9.8      
+  dof_M0                0.1      
+
+DOF 8:
+  dof_bodyid            8 
+  dof_jntid             8 
+  dof_parentid          1 
+  dof_treeid            0 
+  dof_Madr              24 
+  dof_simplenum         0 
+  dof_solref            0.02      1        
+  dof_solimp            0.9       0.95      0.001     0.5       2        
+  dof_frictionloss      0        
+  dof_armature          0.1      
+  dof_damping           1.5      
+  dof_invweight0        8.3      
+  dof_M0                0.12     
+
+DOF 9:
+  dof_bodyid            9 
+  dof_jntid             9 
+  dof_parentid          8 
+  dof_treeid            0 
+  dof_Madr              27 
+  dof_simplenum         0 
+  dof_solref            0.02      1        
+  dof_solimp            0.9       0.95      0.001     0.5       2        
+  dof_frictionloss      0        
+  dof_armature          0.1      
+  dof_damping           1        
+  dof_invweight0        9.8      
+  dof_M0                0.1      
 
 
 GEOM 0:
@@ -1891,7 +1959,7 @@ CAMERA 0:
   cam_targetbodyid      -1 
   cam_pos               0        -3         0.3      
   cam_quat              0.71      0.71      0         0        
-  cam_poscom0           0.024    -3         0.36     
+  cam_poscom0           0.015    -3         0.36     
   cam_pos0              0        -3         0.3      
   cam_mat0              1         0         0         0         2.2e-16  -1         0         1         2.2e-16  
   cam_orthographic      0 
@@ -1913,7 +1981,7 @@ LIGHT 0:
   light_active          1 
   light_pos             0         0         1.3      
   light_dir            -0         0        -1        
-  light_poscom0         0.024     0         0.66     
+  light_poscom0         0.015     0         0.86     
   light_pos0            0         0         1.3      
   light_dir0           -0         0        -1        
   light_attenuation     1         0         0        
@@ -1998,7 +2066,7 @@ TENDON 0:
   tendon_frictionloss   0        
   tendon_lengthspring   0.62      0.62     
   tendon_length0        0.62     
-  tendon_invweight0     0.1      
+  tendon_invweight0     0.12     
   tendon_rgba           0.55      0.78      0.55      1        
   path
     type  objid  prm
@@ -2028,7 +2096,7 @@ TENDON 1:
   tendon_frictionloss   0        
   tendon_lengthspring   0.41      0.41     
   tendon_length0        0.41     
-  tendon_invweight0     0.027    
+  tendon_invweight0     0.047    
   tendon_rgba           0.95      0.5       0.47      1        
   path
     type  objid  prm
@@ -2056,7 +2124,7 @@ TENDON 2:
   tendon_frictionloss   0        
   tendon_lengthspring   0.7       0.7      
   tendon_length0        0.7      
-  tendon_invweight0     0.071    
+  tendon_invweight0     0.099    
   tendon_rgba           0.45      0.49      0.83      1        
   path
     type  objid  prm
@@ -2086,7 +2154,7 @@ TENDON 3:
   tendon_frictionloss   0        
   tendon_lengthspring   0.62      0.62     
   tendon_length0        0.62     
-  tendon_invweight0     0.1      
+  tendon_invweight0     0.12     
   tendon_rgba           0.55      0.78      0.55      1        
   path
     type  objid  prm
@@ -2116,7 +2184,7 @@ TENDON 4:
   tendon_frictionloss   0        
   tendon_lengthspring   0.41      0.41     
   tendon_length0        0.41     
-  tendon_invweight0     0.027    
+  tendon_invweight0     0.047    
   tendon_rgba           0.95      0.5       0.47      1        
   path
     type  objid  prm
@@ -2144,7 +2212,7 @@ TENDON 5:
   tendon_frictionloss   0        
   tendon_lengthspring   0.7       0.7      
   tendon_length0        0.7      
-  tendon_invweight0     0.071    
+  tendon_invweight0     0.099    
   tendon_rgba           0.45      0.49      0.83      1        
   path
     type  objid  prm
@@ -2174,7 +2242,7 @@ TENDON 6:
   tendon_frictionloss   0        
   tendon_lengthspring   0.62      0.62     
   tendon_length0        0.62     
-  tendon_invweight0     0.1      
+  tendon_invweight0     0.12     
   tendon_rgba           0.55      0.78      0.55      1        
   path
     type  objid  prm
@@ -2204,7 +2272,7 @@ TENDON 7:
   tendon_frictionloss   0        
   tendon_lengthspring   0.41      0.41     
   tendon_length0        0.41     
-  tendon_invweight0     0.027    
+  tendon_invweight0     0.047    
   tendon_rgba           0.95      0.5       0.47      1        
   path
     type  objid  prm
@@ -2232,7 +2300,7 @@ TENDON 8:
   tendon_frictionloss   0        
   tendon_lengthspring   0.7       0.7      
   tendon_length0        0.7      
-  tendon_invweight0     0.071    
+  tendon_invweight0     0.099    
   tendon_rgba           0.45      0.49      0.83      1        
   path
     type  objid  prm
@@ -2262,7 +2330,7 @@ TENDON 9:
   tendon_frictionloss   0        
   tendon_lengthspring   0.62      0.62     
   tendon_length0        0.62     
-  tendon_invweight0     0.1      
+  tendon_invweight0     0.12     
   tendon_rgba           0.55      0.78      0.55      1        
   path
     type  objid  prm
@@ -2292,7 +2360,7 @@ TENDON 10:
   tendon_frictionloss   0        
   tendon_lengthspring   0.41      0.41     
   tendon_length0        0.41     
-  tendon_invweight0     0.027    
+  tendon_invweight0     0.047    
   tendon_rgba           0.95      0.5       0.47      1        
   path
     type  objid  prm
@@ -2320,7 +2388,7 @@ TENDON 11:
   tendon_frictionloss   0        
   tendon_lengthspring   0.7       0.7      
   tendon_length0        0.7      
-  tendon_invweight0     0.071    
+  tendon_invweight0     0.099    
   tendon_rgba           0.45      0.49      0.83      1        
   path
     type  objid  prm
@@ -2354,7 +2422,7 @@ ACTUATOR 0:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.94     
+  actuator_acc0         1.1      
   actuator_length0      0.62     
   actuator_lengthrange  0.46      0.77     
   actuator_plugin       -1 
@@ -2381,7 +2449,7 @@ ACTUATOR 1:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.37     
+  actuator_acc0         0.62     
   actuator_length0      0.41     
   actuator_lengthrange  0.34      0.47     
   actuator_plugin       -1 
@@ -2408,7 +2476,7 @@ ACTUATOR 2:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.71     
+  actuator_acc0         0.94     
   actuator_length0      0.7      
   actuator_lengthrange  0.58      0.86     
   actuator_plugin       -1 
@@ -2435,7 +2503,7 @@ ACTUATOR 3:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.94     
+  actuator_acc0         1.1      
   actuator_length0      0.62     
   actuator_lengthrange  0.46      0.77     
   actuator_plugin       -1 
@@ -2462,7 +2530,7 @@ ACTUATOR 4:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.37     
+  actuator_acc0         0.62     
   actuator_length0      0.41     
   actuator_lengthrange  0.34      0.47     
   actuator_plugin       -1 
@@ -2487,11 +2555,11 @@ ACTUATOR 5:
   actuator_ctrlrange    0         1        
   actuator_forcerange   0         0        
   actuator_actrange     0         0        
-  actuator_gear         1     0         0         0         0         0        
+  actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         71       
-  actuator_length0      70       
-  actuator_lengthrange  58        86       
+  actuator_acc0         0.94     
+  actuator_length0      0.7      
+  actuator_lengthrange  0.58      0.86     
   actuator_plugin       -1 
 
 ACTUATOR 6:
@@ -2516,7 +2584,7 @@ ACTUATOR 6:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.94     
+  actuator_acc0         1.1      
   actuator_length0      0.62     
   actuator_lengthrange  0.46      0.77     
   actuator_plugin       -1 
@@ -2543,7 +2611,7 @@ ACTUATOR 7:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.37     
+  actuator_acc0         0.62     
   actuator_length0      0.41     
   actuator_lengthrange  0.34      0.47     
   actuator_plugin       -1 
@@ -2570,7 +2638,7 @@ ACTUATOR 8:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.71     
+  actuator_acc0         0.94     
   actuator_length0      0.7      
   actuator_lengthrange  0.58      0.86     
   actuator_plugin       -1 
@@ -2597,7 +2665,7 @@ ACTUATOR 9:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.94     
+  actuator_acc0         1.1      
   actuator_length0      0.62     
   actuator_lengthrange  0.46      0.77     
   actuator_plugin       -1 
@@ -2624,7 +2692,7 @@ ACTUATOR 10:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.37     
+  actuator_acc0         0.62     
   actuator_length0      0.41     
   actuator_lengthrange  0.34      0.47     
   actuator_plugin       -1 
@@ -2651,7 +2719,7 @@ ACTUATOR 11:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.71     
+  actuator_acc0         0.94     
   actuator_length0      0.7      
   actuator_lengthrange  0.58      0.86     
   actuator_plugin       -1 
