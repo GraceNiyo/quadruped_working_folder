@@ -24,6 +24,7 @@ def solve_tendon_forces(RT, tau):
     else:
         raise RuntimeError('QP solver failed')
 
+
 def invert_flv(F_desired, FL, FV, FP, F0):
     a = np.zeros_like(F_desired)
     valid_indices = (FL > 0) & (FV > 0)
@@ -169,3 +170,6 @@ def compute_and_save_activations(model_path, omega, dt, duration_in_seconds,acti
     np.savetxt(activation_file, activations)
 
     return activation_file, all_qpos, all_qvel, all_qacc
+
+
+

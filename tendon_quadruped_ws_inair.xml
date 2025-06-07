@@ -267,16 +267,6 @@
 
 
   <actuator>
-    <!-- <motor gear="120" joint="rbthigh" name="rbthigh"/>
-    <motor gear="90" joint="rbshin" name="rbshin"/> -->
-
-<!--     <motor gear="120" joint="rfthigh" name="rfthigh"/>
-    <motor gear="60" joint="rfshin" name="rfshin"/>
-    <motor gear="120" joint="lbthigh" name="lbthigh"/>
-    <motor gear="90" joint="lbshin" name="lbshin"/>
-    <motor gear="120" joint="lfthigh" name="lfthigh"/>
-    <motor gear="60" joint="lfshin" name="lfshin"/> -->
-
 
     <muscle name="T_RB_M0" tendon="T_RB_M0"/>
     <muscle name="T_RB_M1" tendon="T_RB_M1"/>
