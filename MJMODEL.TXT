@@ -25,7 +25,7 @@ SIZES
   nwrap               13
   nsensor             1
   nuser_geom          1
-  nnames              358
+  nnames              357
   npaths              1
   nnames_map          82
   nM                  10
@@ -71,12 +71,12 @@ OPTION
   o_solimp            0.9       0.95      0.001     0.5       2        
   o_friction          1         1         0.005     0.0001    0.0001   
 
-totalmass             0.24    
+totalmass             16      
 
 STATISTIC
-  meaninertia         0.17    
-  meanmass            0.079   
-  meansize            0.4     
+  meaninertia         7.9     
+  meanmass            5.2     
+  meansize            0.35    
   extent              8       
   center              0        0        0       
 
@@ -105,7 +105,7 @@ BODY 0:
   body_ipos             0         0         0        
   body_iquat            1         0         0         0        
   body_mass             0        
-  body_subtreemass      0.24     
+  body_subtreemass      16       
   body_inertia          0         0         0        
   body_invweight0       0         0        
   body_gravcomp         0        
@@ -131,14 +131,14 @@ BODY 1:
   body_geomadr          1 
   body_simple           0 
   body_sameframe        3 
-  body_pos              0         0         0.5      
+  body_pos              0         0         0.46     
   body_quat             1         0         0         0        
-  body_ipos            -0.5      -0.25      0.5      
+  body_ipos            -0.5      -0.25      0.2      
   body_iquat            1         0         0         0        
-  body_mass             0.12     
-  body_subtreemass      0.24     
-  body_inertia          0.00051   0.0017    0.002    
-  body_invweight0       2.8       0        
+  body_mass             8        
+  body_subtreemass      16       
+  body_inertia          0.033     0.11      0.13     
+  body_invweight0       0.05      0        
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -166,10 +166,10 @@ BODY 2:
   body_quat             1         0         0         0        
   body_ipos            -0.039     0        -0.066    
   body_iquat            0.68      0.18      0.18      0.68     
-  body_mass             0.06     
-  body_subtreemass      0.11     
-  body_inertia          0.00068   0.00066   9.4e-05  
-  body_invweight0       2.8       3.2      
+  body_mass             3.9      
+  body_subtreemass      7.5      
+  body_inertia          0.045     0.044     0.0062   
+  body_invweight0       0.043     0.87     
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -197,10 +197,10 @@ BODY 3:
   body_quat             1         0         0         0        
   body_ipos             0.033     0        -0.046    
   body_iquat            0.67     -0.21     -0.21      0.67     
-  body_mass             0.055    
-  body_subtreemass      0.055    
-  body_inertia          0.00043   0.00042   8.8e-05  
-  body_invweight0       3         6.4      
+  body_mass             3.6      
+  body_subtreemass      3.6      
+  body_inertia          0.028     0.027     0.0058   
+  body_invweight0       0.084     2.8      
   body_gravcomp         0        
   body_margin           0        
   body_plugin           -1 
@@ -299,8 +299,8 @@ DOF 0:
   dof_frictionloss      0        
   dof_armature          0        
   dof_damping           0        
-  dof_invweight0        4.3      
-  dof_M0                0.24     
+  dof_invweight0        0.081    
+  dof_M0                16       
 
 DOF 1:
   dof_bodyid            1 
@@ -314,8 +314,8 @@ DOF 1:
   dof_frictionloss      0        
   dof_armature          0        
   dof_damping           0        
-  dof_invweight0        4.2      
-  dof_M0                0.24     
+  dof_invweight0        0.068    
+  dof_M0                16       
 
 DOF 2:
   dof_bodyid            2 
@@ -329,8 +329,8 @@ DOF 2:
   dof_frictionloss      0        
   dof_armature          0.1      
   dof_damping           1.5      
-  dof_invweight0        9.6      
-  dof_M0                0.11     
+  dof_invweight0        2.6      
+  dof_M0                0.53     
 
 DOF 3:
   dof_bodyid            3 
@@ -344,8 +344,8 @@ DOF 3:
   dof_frictionloss      0        
   dof_armature          0.1      
   dof_damping           1        
-  dof_invweight0        9.9      
-  dof_M0                0.1      
+  dof_invweight0        7.7      
+  dof_M0                0.14     
 
 
 GEOM 0:
@@ -395,7 +395,7 @@ GEOM 1:
   geom_size             0.2       0.1       0.05     
   geom_aabb             0         0         0         0.2       0.1       0.05     
   geom_rbound           0.23     
-  geom_pos             -0.5      -0.25      0.5      
+  geom_pos             -0.5      -0.25      0.2      
   geom_quat             1         0         0         0        
   geom_friction         1         0.1       0.1      
   geom_margin           0        
@@ -681,7 +681,7 @@ CAMERA 0:
   cam_targetbodyid      -1 
   cam_pos               0        -3         0.3      
   cam_quat              0.71      0.71      0         0        
-  cam_poscom0           0.53     -2.8       0.13     
+  cam_poscom0           0.53     -2.8       0.28     
   cam_pos0              0        -3         0.3      
   cam_mat0              1         0         0         0         2.2e-16  -1         0         1         2.2e-16  
   cam_orthographic      0 
@@ -703,7 +703,7 @@ LIGHT 0:
   light_active          1 
   light_pos             0         0         1.3      
   light_dir            -0         0        -1        
-  light_poscom0         0.53      0.25      0.63     
+  light_poscom0         0.53      0.25      0.82     
   light_pos0            0         0         1.3      
   light_dir0           -0         0        -1        
   light_attenuation     1         0         0        
@@ -783,12 +783,12 @@ TENDON 0:
   tendon_solimp_fri     0.9       0.95      0.001     0.5       2        
   tendon_range          0         0        
   tendon_margin         0        
-  tendon_stiffness      50       
+  tendon_stiffness      2.5e+02  
   tendon_damping        0        
   tendon_frictionloss   0        
   tendon_lengthspring   0.62      0.62     
   tendon_length0        0.62     
-  tendon_invweight0     0.13     
+  tendon_invweight0     0.083    
   tendon_rgba           0.55      0.78      0.55      1        
   path
     type  objid  prm
@@ -813,12 +813,12 @@ TENDON 1:
   tendon_solimp_fri     0.9       0.95      0.001     0.5       2        
   tendon_range          0         0        
   tendon_margin         0        
-  tendon_stiffness      50       
+  tendon_stiffness      2.5e+02  
   tendon_damping        0        
   tendon_frictionloss   0        
   tendon_lengthspring   0.41      0.41     
   tendon_length0        0.41     
-  tendon_invweight0     0.054    
+  tendon_invweight0     0.015    
   tendon_rgba           0.95      0.5       0.47      1        
   path
     type  objid  prm
@@ -841,12 +841,12 @@ TENDON 2:
   tendon_solimp_fri     0.9       0.95      0.001     0.5       2        
   tendon_range          0         0        
   tendon_margin         0        
-  tendon_stiffness      50       
+  tendon_stiffness      2.5e+02  
   tendon_damping        0        
   tendon_frictionloss   0        
   tendon_lengthspring   0.7       0.7      
   tendon_length0        0.7      
-  tendon_invweight0     0.11     
+  tendon_invweight0     0.047    
   tendon_rgba           0.45      0.49      0.83      1        
   path
     type  objid  prm
@@ -880,7 +880,7 @@ ACTUATOR 0:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         1.1      
+  actuator_acc0         0.78     
   actuator_length0      0.62     
   actuator_lengthrange  0.46      0.77     
   actuator_plugin       -1 
@@ -907,7 +907,7 @@ ACTUATOR 1:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         0.72     
+  actuator_acc0         0.21     
   actuator_length0      0.41     
   actuator_lengthrange  0.34      0.47     
   actuator_plugin       -1 
@@ -934,14 +934,14 @@ ACTUATOR 2:
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         1        
+  actuator_acc0         0.51     
   actuator_length0      0.7      
   actuator_lengthrange  0.58      0.86     
   actuator_plugin       -1 
 
 
 SENSOR 0:
-  name                  rb_sensor
+  name                  rb_touch
   sensor_type           0 
   sensor_datatype       1 
   sensor_needstage      3 

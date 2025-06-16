@@ -40,7 +40,7 @@
     <!-- in this model, mass is calculated based on density -->
     <joint armature=".1" damping=".01" limited="true" solimplimit="0 .8 .03" solreflimit=".02 1" stiffness="8"/>
     <geom conaffinity="0" condim="3" contype="1" friction="1 .1 .1" rgba="0.8 0.6 .4 1" solimp="0.0 0.8 0.01" solref="0.02 1" density = "61"/>
-    <motor ctrllimited="true" ctrlrange="-1 1"/>
+
 
     <tendon stiffness = "50"/>
     <muscle ctrllimited="true" ctrlrange="0 1" force="100" />
