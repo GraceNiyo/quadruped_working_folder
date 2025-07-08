@@ -1,4 +1,3 @@
-
 import mujoco
 import mujoco.viewer
 import numpy as np
@@ -29,18 +28,18 @@ muscle_activations = np.array([M0, M1, M2])
 
 # Apply force from 0 N down to -50 N (in z-direction)
 force_vector = np.arange(0, -51, -1)
-delay_time = 5  # seconds 
+#  phase_durations for total simulation time and phase transitions
+delay_time = 5  # seconds
 pulse_duration = 1  # seconds
-
 post_pulse_record_duration = 5 # seconds
 
 # Reflex gain values
-reflex_gains = np.arange(0, 110, 10) 
+reflex_gains = np.arange(0, 110, 10)
 
 
 closed_loop = True  # enable feedback control
-is_beta = False     # (True:alpha-gamma, False: gamma only)
-collateral = False   # (True: collateral, False: no collateral)
+is_beta = True    # (True:beta drive, False: alpha, gamma drive)
+collateral = False  # (True: alpha_gamma_with_collateral, False: no collateral)
 
 
 # --- Model Loading and Initialization ---
@@ -49,14 +48,14 @@ try:
     data = mujoco.MjData(model)
 except Exception as e:
     print(f"Error loading MuJoCo model from {path_to_model}: {e}")
-    exit() 
+    exit()
 
 # Get IDs from the model
 body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, 'torso')
 if body_id == -1:
     print("Error: 'torso' body not found in model.")
     exit()
-force_location_on_model = data.xpos[body_id] 
+force_location_on_model = data.xpos[body_id]
 
 torso_id = model.body("torso").id
 if torso_id == -1:
@@ -82,6 +81,20 @@ if floor_geom_id == -1:
 # List to store results from all simulation runs
 all_simulation_results = []
 
+# durations for each new phase
+phase_durations = [
+    2.0, # Phase 1: Only muscle activation, no external force (0 to 2s)
+    3.0, # Phase 2: Muscle activation + Ia feedback, no external force (2 to 5s)
+    1.0, # Phase 3: Muscle activation + Ia feedback + external force (the pulse) (5 to 6s)
+    3.0, # Phase 4: Muscle activation + Ia feedback, no external force (6 to 9s)
+    2.0  # Phase 5: Only muscle activation, no external force (9 to 11s)
+]
+
+# Calculate cumulative time thresholds for phase transitions
+cumulative_times = np.cumsum(phase_durations)
+total_sim_duration = cumulative_times[-1]
+
+
 # --- Main Simulation Loop ---
 
 with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui=True) as viewer:
@@ -95,9 +108,9 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
     for f in force_vector:
         # Define the force vector for the current run
         force = np.array([0, 0, f])
-        torque = np.array([0, 0, 0]) # No torque applied 
+        torque = np.array([0, 0, 0]) # No torque applied
 
-     
+
         for gain in reflex_gains:
             print(f'\n--- Running simulation for Force: {f} N, Reflex Gain: {gain} ---')
 
@@ -123,18 +136,17 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                 'muscle_force': [],
                 'touch_sensor': [],
                 'ground_contact_force': [],
-                'spindle_feedback': [], 
-                'time': [] 
+                'spindle_feedback': [],
+                'time': []
             }
 
-            # Initialize Ia (afferent feedback signal) 
+            # Initialize Ia (afferent feedback signal)
             Ia = np.zeros(model.nu)
-            total_sim_duration = delay_time + pulse_duration + post_pulse_record_duration
             total_steps = int(total_sim_duration / model.opt.timestep) + 1 # Add 1 to ensure last step is included
 
             # Run the simulation for the calculated total number of steps
             for step_count in range(total_steps):
-                # step_start_real_time = time.time() # will be removed later, used for debugging now 
+                # step_start_real_time = time.time() # will be removed later, used for debugging now
 
                 # Check if the viewer is still running. If closed, terminate the current run.
                 if viewer.is_running():
@@ -148,52 +160,92 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
 
                 # --- Simulation Phase Logic ---
 
-                if current_sim_time_relative < delay_time:
-                    # print(Ia)
-                    # Phase 1: Delay - Apply initial muscle activations, no external force
+                if current_sim_time_relative < cumulative_times[0]: # Phase 1: 0 to 2 seconds
                     data.ctrl[:] = muscle_activations
                     data.qfrc_applied[:] = 0.0 # Ensure no external force is applied
-                elif current_sim_time_relative < delay_time + pulse_duration:
-                    # Phase 2: Force Pulse - Apply force and calculate muscle drive with feedback
-                    if gain == 0: 
+                elif current_sim_time_relative < cumulative_times[1]: # Phase 2: 2 to 5 seconds
+                    # Muscle activation + Ia feedback, no external force
+                    if gain == 0:
                         drive_to_muscle = muscle_activations
-                        Ia[:] = 0.0 
+                        Ia[:] = 0.0
                     else:
-                        # Alpha-gamma drive: muscle_activations * gain + Ia
                         if is_beta:
                             drive_to_muscle = muscle_activations * gain + Ia
                         else:
-                        # Gamma only drive: muscle_activations + Ia
-                            drive_to_muscle = muscle_activations + Ia   
+                            drive_to_muscle = muscle_activations + Ia
 
-                    data.ctrl[:] = drive_to_muscle 
+                        if closed_loop:
+                            if collateral and not is_beta:
+                                for m in range(model.nu):
+                                    Ia[m] = (drive_to_muscle[m] * gain) * data.actuator_velocity[m]
 
+                            elif not collateral and not is_beta:
+                                for m in range(model.nu):
+                                    Ia[m] = (gain) * data.actuator_velocity[m]
+                            elif is_beta and not collateral:
+                                for m in range(model.nu):
+                                    Ia[m] = (drive_to_muscle[m]) * data.actuator_velocity[m]
+                        else:
+                            Ia[:] = 0.0
+                    data.ctrl[:] = drive_to_muscle
+                    data.qfrc_applied[:] = 0.0 # No external force
+                elif current_sim_time_relative < cumulative_times[2]: # Phase 3: 5 to 6 seconds
+                    # Muscle activation + Ia feedback + external force (the pulse)
+                    if gain == 0:
+                        drive_to_muscle = muscle_activations
+                        Ia[:] = 0.0
+                    else:
+                        if is_beta:
+                            drive_to_muscle = muscle_activations * gain + Ia
+                        else:
+                            drive_to_muscle = muscle_activations + Ia
+
+                        if closed_loop:
+                            if collateral and not is_beta:
+                                for m in range(model.nu):
+                                    Ia[m] = (drive_to_muscle[m] * gain) * data.actuator_velocity[m]
+
+                            elif not collateral and not is_beta:
+                                for m in range(model.nu):
+                                    Ia[m] = (gain) * data.actuator_velocity[m]
+                            elif not collateral and is_beta:
+                                for m in range(model.nu):
+                                    Ia[m] = (drive_to_muscle[m]) * data.actuator_velocity[m]
+                        else:
+                            Ia[:] = 0.0
+                    data.ctrl[:] = drive_to_muscle
                     # Apply the external force pulse
                     mujoco.mj_applyFT(model, data, force, torque, force_location_on_model, body_id, data.qfrc_applied)
-
-                    # Update Ia based on feedback control logic
-                    if closed_loop:
-                        if collateral and not is_beta:
-                        # Collateral, alpha-to-gamma only
-                            for m in range(model.nu):
-                                Ia[m] = (drive_to_muscle[m] * gain) * data.actuator_velocity[m]
-
-                        elif not collateral and not is_beta:
-                            # No collateral feedback, gamma only
-                            for m in range(model.nu):
-                                Ia[m] = (gain) * data.actuator_velocity[m]
-                            # print(Ia)
-                        elif not collateral and is_beta:
-                            # No collateral, alpha and gamma
-                            for m in range(model.nu):
-                                Ia[m] = (drive_to_muscle[m]) * data.actuator_velocity[m]
-                    else:
-                        # No closed loop feedback
+                elif current_sim_time_relative < cumulative_times[3]: # Phase 4: 6 to 9 seconds
+                    # Muscle activation + Ia feedback, no external force
+                    if gain == 0:
+                        drive_to_muscle = muscle_activations
                         Ia[:] = 0.0
-                else:
-                    # Phase 3: Post-Pulse Recording - Remove force, maintain activations
-                    data.ctrl[:] = muscle_activations # Or maintain the last drive_to_muscle, depending on desired behavior
-                    data.qfrc_applied[:] = 0.0 # Explicitly remove the applied force
+                    else:
+                        if is_beta:
+                            drive_to_muscle = muscle_activations * gain + Ia
+                        else:
+                            drive_to_muscle = muscle_activations + Ia
+
+                        if closed_loop:
+                            if collateral and not is_beta:
+                                for m in range(model.nu):
+                                    Ia[m] = (drive_to_muscle[m] * gain) * data.actuator_velocity[m]
+
+                            elif not collateral and not is_beta:
+                                for m in range(model.nu):
+                                    Ia[m] = (gain) * data.actuator_velocity[m]
+                            elif not collateral and is_beta:
+                                for m in range(model.nu):
+                                    Ia[m] = (drive_to_muscle[m]) * data.actuator_velocity[m]
+                        else:
+                            Ia[:] = 0.0
+                    data.ctrl[:] = drive_to_muscle
+                    data.qfrc_applied[:] = 0.0 # No external force
+                else: # Phase 5: 9 to 11 seconds (and beyond, until total_steps is reached)
+                    # Only muscle activation, no external force
+                    data.ctrl[:] = muscle_activations
+                    data.qfrc_applied[:] = 0.0
 
                 # --- Step the simulation ---
                 mujoco.mj_step(model, data)
@@ -211,7 +263,7 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                 run_data['muscle_force'].append(data.actuator_force.copy())
                 run_data['touch_sensor'].append(data.sensordata[touch_sensor_id].copy())
                 run_data['ground_contact_force'].append(contact_force.copy())
-                run_data['spindle_feedback'].append(Ia.copy()) 
+                run_data['spindle_feedback'].append(Ia.copy())
                 run_data['time'].append(data.time)
 
 
@@ -221,8 +273,8 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                 # time_to_sleep = model.opt.timestep - time_elapsed_real
                 # if time_to_sleep > 0:
                 #     time.sleep(time_to_sleep)
-                # else: # warning if simulation is running slower than real-time
-                #     print(f"Warning: Simulation step {step_count} exceeded the defined timestep! ({time_elapsed_real:.4f}s vs {model.opt.timestep:.4f}s)")
+                # # else: # warning if simulation is running slower than real-time
+                # #     print(f"Warning: Simulation step {step_count} exceeded the defined timestep! ({time_elapsed_real:.4f}s vs {model.opt.timestep:.4f}s)")
 
 
             # Determine the feedback type string for the filename
@@ -231,7 +283,7 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
             elif collateral: # is_beta is False and collateral is True
                 feedback_type_str = "alpha_gamma_collateral"
             else: # is_beta is False and collateral is False
-                feedback_type_str = "gamma_only"
+                feedback_type_str = "alpha_gamma"
 
             base_filename = f"{feedback_type_str}_force_{abs(f)}_gain_{gain}"
 
@@ -258,6 +310,7 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
 print("\nAll simulations completed.")
 print(f"Total {len(all_simulation_results)} simulation runs performed.")
 print(f"All data saved to: {base_data_dir}")
+
 
 
 
