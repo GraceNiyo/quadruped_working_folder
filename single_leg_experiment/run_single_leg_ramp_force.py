@@ -16,8 +16,8 @@ except ImportError:
 
 # --- Configuration Parameters ---
 path_to_model = '../Working_Folder/single_leg_experiment/single_leg.xml'
-base_data_dir = '../all_data/single_leg_experiment/force_pulse_data'
-os.makedirs(base_data_dir, exist_ok=True)
+# base_data_dir = '../all_data/single_leg_experiment/force_pulse_data'
+# os.makedirs(base_data_dir, exist_ok=True)
 
 # Muscle activation levels (M0, M1, M2)
 M0 = 0
@@ -27,7 +27,7 @@ muscle_activations = np.array([M0, M1, M2])
 
 
 # Apply force from 0 N down to -50 N (in z-direction)
-force_vector = np.arange(0, -51, -1)
+force_vector = np.arange(-0.1, -5.1, -0.1)
 #  phase_durations for total simulation time and phase transitions
 delay_time = 5  # seconds
 pulse_duration = 1  # seconds
@@ -38,7 +38,7 @@ reflex_gains = np.arange(0, 110, 10)
 
 
 closed_loop = True  # enable feedback control
-is_beta = True    # (True:beta drive, False: alpha, gamma drive)
+is_beta = False   # (True:beta drive, False: alpha, gamma drive)
 collateral = False  # (True: alpha_gamma_with_collateral, False: no collateral)
 
 
@@ -146,7 +146,7 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
 
             # Run the simulation for the calculated total number of steps
             for step_count in range(total_steps):
-                # step_start_real_time = time.time() # will be removed later, used for debugging now
+                step_start_real_time = time.time() # will be removed later, used for debugging now
 
                 # Check if the viewer is still running. If closed, terminate the current run.
                 if viewer.is_running():
@@ -267,49 +267,49 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                 run_data['time'].append(data.time)
 
 
-                # # syncronize to model real_time simulation
-                # time_elapsed_real = time.time() - step_start_real_time
-                # # Calculate time remaining to match model.opt.timestep
-                # time_to_sleep = model.opt.timestep - time_elapsed_real
-                # if time_to_sleep > 0:
-                #     time.sleep(time_to_sleep)
-                # # else: # warning if simulation is running slower than real-time
-                # #     print(f"Warning: Simulation step {step_count} exceeded the defined timestep! ({time_elapsed_real:.4f}s vs {model.opt.timestep:.4f}s)")
+                # syncronize to model real_time simulation
+                time_elapsed_real = time.time() - step_start_real_time
+                # Calculate time remaining to match model.opt.timestep
+                time_to_sleep = model.opt.timestep - time_elapsed_real
+                if time_to_sleep > 0:
+                    time.sleep(time_to_sleep)
+                else: # warning if simulation is running slower than real-time
+                    print(f"Warning: Simulation step {step_count} exceeded the defined timestep! ({time_elapsed_real:.4f}s vs {model.opt.timestep:.4f}s)")
 
 
             # Determine the feedback type string for the filename
-            if is_beta:
-                feedback_type_str = "beta"
-            elif collateral: # is_beta is False and collateral is True
-                feedback_type_str = "alpha_gamma_collateral"
-            else: # is_beta is False and collateral is False
-                feedback_type_str = "alpha_gamma"
+            # if is_beta:
+            #     feedback_type_str = "beta"
+            # elif collateral: # is_beta is False and collateral is True
+            #     feedback_type_str = "alpha_gamma_collateral"
+            # else: # is_beta is False and collateral is False
+            #     feedback_type_str = "alpha_gamma"
 
-            base_filename = f"{feedback_type_str}_force_{abs(f)}_gain_{gain}"
+            # base_filename = f"{feedback_type_str}_force_{abs(f)}_gain_{gain}"
 
-            # Save each data array to a separate .txt file
-            for data_key, data_list in run_data.items():
-                # Skip 'force' and 'gain' as they are part of the filename
-                if data_key in ['force', 'gain']:
-                    continue
+            # # Save each data array to a separate .txt file
+            # for data_key, data_list in run_data.items():
+            #     # Skip 'force' and 'gain' as they are part of the filename
+            #     if data_key in ['force', 'gain']:
+            #         continue
 
-                # Convert list of arrays to a single NumPy array for saving
-                # Handle scalar data (like touch_sensor if it's a single value per step)
-                if isinstance(data_list[0], (float, int, np.ndarray)) and np.ndim(data_list[0]) == 0:
-                    data_to_save = np.array(data_list).reshape(-1, 1) # Reshape to a column vector
-                else:
-                    data_to_save = np.array(data_list)
+            #     # Convert list of arrays to a single NumPy array for saving
+            #     # Handle scalar data (like touch_sensor if it's a single value per step)
+            #     if isinstance(data_list[0], (float, int, np.ndarray)) and np.ndim(data_list[0]) == 0:
+            #         data_to_save = np.array(data_list).reshape(-1, 1) # Reshape to a column vector
+            #     else:
+            #         data_to_save = np.array(data_list)
 
-                file_path = os.path.join(base_data_dir, f"{base_filename}_{data_key}.txt")
-                np.savetxt(file_path, data_to_save, fmt='%.8f', delimiter='\t') # Using tab delimiter for MATLAB
-                # print(f"Saved {data_key} to {file_path}")
+            #     file_path = os.path.join(base_data_dir, f"{base_filename}_{data_key}.txt")
+            #     np.savetxt(file_path, data_to_save, fmt='%.8f', delimiter='\t') # Using tab delimiter for MATLAB
+            #     # print(f"Saved {data_key} to {file_path}")
 
             # Optionally, keep the data in all_simulation_results if you need it in memory for further processing
-            all_simulation_results.append(run_data)
+            # all_simulation_results.append(run_data)
 
-print("\nAll simulations completed.")
-print(f"Total {len(all_simulation_results)} simulation runs performed.")
-print(f"All data saved to: {base_data_dir}")
+# print("\nAll simulations completed.")
+# print(f"Total {len(all_simulation_results)} simulation runs performed.")
+# print(f"All data saved to: {base_data_dir}")
 
 
 
