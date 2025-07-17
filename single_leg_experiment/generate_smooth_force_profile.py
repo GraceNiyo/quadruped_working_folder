@@ -42,12 +42,12 @@ def generate_smooth_force_profile(
 
 # Example usage
 if __name__ == "__main__":
-    total_duration = 1.0  # Total simulation time in seconds
+    total_duration = 5.0  # Total simulation time in seconds
     timestep = 0.005  # Time step for the simulation
-    pulse_start_time = 0.0  # Start time of the force pulse
-    pulse_end_time = 1  # End time of the force pulse
+    pulse_start_time = 2.0  # Start time of the force pulse
+    pulse_end_time = 3  # End time of the force pulse
     peak_force = -1.0  # Peak force in Newtons (negative for downward force)
-    transition_duration = 0.05  # Duration of the ramp up/down in seconds
+    transition_duration = 0.5  # Duration of the ramp up/down in seconds
 
     force_profile = generate_smooth_force_profile(
         total_duration,

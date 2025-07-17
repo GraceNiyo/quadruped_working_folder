@@ -2,13 +2,13 @@
   <!-- defaults -->
   <compiler angle="radian" settotalmass="1"/>
 
-  <option timestep="0.005"/>
+  <option timestep="0.002" integrator="implicitfast"/>
 
   <size nstack="300000" nuser_geom="1"/>
 
   <default>
     <joint solimplimit="0 0.8 0.03" stiffness="8" limited="true" armature="0.1" damping="0.01"/>
-    <geom conaffinity="0" friction="1 0.1 0.1" density="66" rgba="0.8 0.6 0.4 1"/>
+    <geom conaffinity="0" friction ="1 0.005 0.0001" density="66" rgba="0.8 0.6 0.4 1"/>
 
     <tendon stiffness="250"/>
     <muscle ctrllimited="true" ctrlrange="0 1"/>

@@ -3,6 +3,7 @@ import mujoco.viewer
 import numpy as np
 import time
 import os
+import matplotlib.pyplot as plt
 
 
 try:
@@ -27,14 +28,14 @@ muscle_activations = np.array([M0, M1, M2])
 
 
 # Apply force from 0 N down to -50 N (in z-direction)
-force_vector = np.arange(-0.1, -5.1, -0.1)
+force_vector = np.arange(-1, -2, -1)
 #  phase_durations for total simulation time and phase transitions
-delay_time = 5  # seconds
-pulse_duration = 1  # seconds
-post_pulse_record_duration = 5 # seconds
+# delay_time = 10  # seconds
+# pulse_duration = 10  # seconds
+# post_pulse_record_duration = 10 # seconds
 
 # Reflex gain values
-reflex_gains = np.arange(0, 110, 10)
+reflex_gains = np.arange(0, 10, 10)
 
 
 closed_loop = True  # enable feedback control
@@ -89,6 +90,8 @@ phase_durations = [
     3.0, # Phase 4: Muscle activation + Ia feedback, no external force (6 to 9s)
     2.0  # Phase 5: Only muscle activation, no external force (9 to 11s)
 ]
+
+# phase_durations = [5,5,10,5,5]
 
 # Calculate cumulative time thresholds for phase transitions
 cumulative_times = np.cumsum(phase_durations)
@@ -190,6 +193,24 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                     data.ctrl[:] = drive_to_muscle
                     data.qfrc_applied[:] = 0.0 # No external force
                 elif current_sim_time_relative < cumulative_times[2]: # Phase 3: 5 to 6 seconds
+                    start_time_phase3 = cumulative_times[1] # Time when phase 3 begins (5s)
+                    end_time_phase3 = cumulative_times[2] # Time when phase 3 ends (6s)
+                    ramp_duration = 0.1 # seconds for ramp-up and ramp-down
+
+                    # Ramp-up
+                    if current_sim_time_relative < start_time_phase3 + ramp_duration:
+                        alpha = (current_sim_time_relative - start_time_phase3) / ramp_duration
+                        ramped_force = force * alpha
+                    # Hold
+                    elif current_sim_time_relative < end_time_phase3 - ramp_duration:
+                        ramped_force = force
+                    # Ramp-down (Note: This might be handled by the next phase, but good to be explicit for a pulse)
+                    # For a simple pulse, the removal is often handled by setting force to 0 in next phase.
+                    # However, for a true smooth pulse, the ramp-down should be within this phase.
+                    # Since your next phase sets qfrc_applied to 0, let's focus on ramp-up for now.
+                    else: # After the ramp-up and hold, until end of phase 3
+                        ramped_force = force # Or implement ramp-down here if the pulse fully ramps down
+
                     # Muscle activation + Ia feedback + external force (the pulse)
                     if gain == 0:
                         drive_to_muscle = muscle_activations
@@ -215,7 +236,7 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                             Ia[:] = 0.0
                     data.ctrl[:] = drive_to_muscle
                     # Apply the external force pulse
-                    mujoco.mj_applyFT(model, data, force, torque, force_location_on_model, body_id, data.qfrc_applied)
+                    mujoco.mj_applyFT(model, data, ramped_force, torque, force_location_on_model, body_id, data.qfrc_applied)
                 elif current_sim_time_relative < cumulative_times[3]: # Phase 4: 6 to 9 seconds
                     # Muscle activation + Ia feedback, no external force
                     if gain == 0:
@@ -305,11 +326,35 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
             #     # print(f"Saved {data_key} to {file_path}")
 
             # Optionally, keep the data in all_simulation_results if you need it in memory for further processing
-            # all_simulation_results.append(run_data)
+            all_simulation_results.append(run_data)
 
 # print("\nAll simulations completed.")
 # print(f"Total {len(all_simulation_results)} simulation runs performed.")
 # print(f"All data saved to: {base_data_dir}")
+
+# plot ground reaction force
+plt.figure(figsize=(10, 6))
+for run_data in all_simulation_results:
+    time_data = np.array(run_data['time'])
+    grf_data = np.array(run_data['ground_contact_force'])
+    plt.plot(time_data, grf_data/(9.8))
+plt.title("Ground Reaction Force Over Time")
+plt.xlabel("Time (s)")
+plt.ylabel("Ground Reaction Force (N)")
+# plt.legend("rootx","rootz","hip","knee")
+plt.show()
+
+# # plot global center of mass
+# plt.figure(figsize=(10, 6))
+# for run_data in all_simulation_results:
+#     time_data = np.array(run_data['time'])
+#     com_data = np.array(run_data['global_com'])
+#     plt.plot(time_data, com_data)
+# plt.title("Global Center of Mass Over Time")
+# plt.xlabel("Time (s)")
+# plt.ylabel("Global Center of Mass (m)")
+# plt.show()
+
 
 
 
