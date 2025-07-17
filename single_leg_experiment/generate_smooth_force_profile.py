@@ -3,62 +3,66 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def generate_smooth_force_profile(
-    total_duration,
+    duration,
     timestep,
-    pulse_start_time,
-    pulse_end_time,
+    rise_time,
+    decay_time,
     peak_force,
-    transition_duration
+
 ):
     """
     Generates a smooth step force profile for the entire simulation duration.
     """
-    num_steps = int(total_duration / timestep) + 1
-    time_points = np.linspace(0, total_duration, num_steps)
-    force_profile = np.zeros(num_steps)
-
-    for i, t in enumerate(time_points):
-        force = 0.0
-        # Ramp up phase
-        if t >= pulse_start_time and t < pulse_start_time + transition_duration:
-            t_scaled = (t - pulse_start_time) / transition_duration
-            force_factor = 0.5 * (1 + np.tanh(5 * (t_scaled - 0.5)))
-            force = peak_force * force_factor
-        # Full force phase
-        elif t >= pulse_start_time + transition_duration and t < pulse_end_time:
-            force = peak_force
-        # Ramp down phase
-        elif t >= pulse_end_time and t < pulse_end_time + transition_duration:
-            t_scaled = (t - pulse_end_time) / transition_duration
-            force_factor = 0.5 * (1 - np.tanh(5 * (t_scaled - 0.5)))
-            force = peak_force * force_factor
-        # No force outside these ranges
-        else:
-            force = 0.0
-        
-        force_profile[i] = force
+    if rise_time < 0 or decay_time < 0:
+        raise ValueError("Rise and decay times must be non-negative.")
+    if duration < rise_time + decay_time:
+        raise ValueError("Total duration must be greater than the sum of rise and decay times.")
     
-    return force_profile
+    if timestep <= 0:
+        raise ValueError("Timestep must be a positive value.")
+    
+    force_values = []
 
-# Example usage
+    steady_state_duration = duration - rise_time - decay_time
+    num_steps = int(duration / timestep)
+
+    for i in range(num_steps):
+        current_time = i * timestep
+
+        if current_time < rise_time:
+            # Rise phase: Smoothly transition from 0 to 1.
+            t = current_time / rise_time
+            force_value = (t * t * (3 - 2 * t)) * peak_force
+        elif current_time < rise_time + steady_state_duration:
+            # Steady state: Value remains at 1.
+            force_value = peak_force
+        else:
+            # Decay phase: Smoothly transition from 1 to 0.
+            t = (current_time - (duration - decay_time)) / decay_time
+            force_value = (1 - (t * t * (3 - 2 * t))) * peak_force
+
+        force_values.append(force_value)
+
+    return force_values
+
+
 if __name__ == "__main__":
-    total_duration = 5.0  # Total simulation time in seconds
+    duration = 1.0  # Total simulation time in seconds
     timestep = 0.005  # Time step for the simulation
-    pulse_start_time = 2.0  # Start time of the force pulse
-    pulse_end_time = 3  # End time of the force pulse
+    rise_time = 0.0625  # Time to reach peak force
+    decay_time = 0.0625  # Time to decay to zero force
     peak_force = -1.0  # Peak force in Newtons (negative for downward force)
-    transition_duration = 0.5  # Duration of the ramp up/down in seconds
+    
 
     force_profile = generate_smooth_force_profile(
-        total_duration,
+        duration,
         timestep,
-        pulse_start_time,
-        pulse_end_time,
-        peak_force,
-        transition_duration
+        rise_time,
+        decay_time,
+        peak_force
     )
 
-    plt.plot(np.arange(0, total_duration + timestep, timestep), force_profile)
+    plt.plot(np.arange(0, duration, timestep), force_profile)
     plt.title("Smooth Step Force Profile")
     plt.xlabel("Time (s)")
     plt.ylabel("Force (N)")
