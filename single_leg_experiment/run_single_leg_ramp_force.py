@@ -23,18 +23,15 @@ path_to_model = '../Working_Folder/single_leg_experiment/single_leg.xml'
 # os.makedirs(base_data_dir, exist_ok=True)
 
 # Muscle activation levels (M0, M1, M2)
-M0 = 0
-M1 = 0
-M2 = 0.5
+M0 = 0.05
+M1 = 0.05
+M2 = 0.38
 muscle_activations = np.array([M0, M1, M2])
 
 
-# Apply force from 0 N down to -50 N (in z-direction)
-force_vector = np.arange(-1, -2, -1)
-#  phase_durations for total simulation time and phase transitions
-# delay_time = 10  # seconds
-# pulse_duration = 10  # seconds
-# post_pulse_record_duration = 10 # seconds
+# Apply force from 0 N down to -10 N (in z-direction)
+force_vector = np.arange(-1,-10.1,-1)
+
 
 # Reflex gain values
 reflex_gains = np.arange(0, 10, 10)
@@ -93,7 +90,7 @@ phase_durations = [
     2.0  # Phase 5: Only muscle activation, no external force (9 to 11s)
 ]
 
-# phase_durations = [5,5,10,5,5]
+
 
 # Calculate cumulative time thresholds for phase transitions
 cumulative_times = np.cumsum(phase_durations)
@@ -114,6 +111,7 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
         # Define the force vector for the current run
         force = np.array([0, 0, f])
         torque = np.array([0, 0, 0]) # No torque applied
+        applied_force = np.zeros(3)  # Initialize applied force
 
         force_values = generate_smooth_force_profile(
             duration=phase_durations[2],  # Duration of the force pulse
@@ -150,7 +148,8 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                 'touch_sensor': [],
                 'ground_contact_force': [],
                 'spindle_feedback': [],
-                'time': []
+                'time': [],
+                'external_applied_force': []  # Store external applied force
             }
 
             # Initialize Ia (afferent feedback signal)
@@ -270,9 +269,11 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                 # --- Step the simulation ---
                 mujoco.mj_step(model, data)
 
+
                 # --- Collect Data for the Current Step ---
                 contact_force = compute_grf.get_ground_reaction_force(model, data, foot_geom_id, floor_geom_id)
 
+                run_data['external_applied_force'].append(applied_force)
                 run_data['joint_position'].append(data.qpos.copy())
                 run_data['joint_velocity'].append(data.qvel.copy())
                 run_data['trunk_position'].append(data.xpos[torso_id].copy())
@@ -293,8 +294,8 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                 time_to_sleep = model.opt.timestep - time_elapsed_real
                 if time_to_sleep > 0:
                     time.sleep(time_to_sleep)
-                else: # warning if simulation is running slower than real-time
-                    print(f"Warning: Simulation step {step_count} exceeded the defined timestep! ({time_elapsed_real:.4f}s vs {model.opt.timestep:.4f}s)")
+                # else: # warning if simulation is running slower than real-time
+                #     print(f"Warning: Simulation step {step_count} exceeded the defined timestep! ({time_elapsed_real:.4f}s vs {model.opt.timestep:.4f}s)")
 
 
             # Determine the feedback type string for the filename
@@ -336,21 +337,36 @@ plt.figure(figsize=(10, 6))
 for run_data in all_simulation_results:
     time_data = np.array(run_data['time'])
     grf_data = np.array(run_data['ground_contact_force'])
-    plt.plot(time_data, grf_data/(9.8))
+    plt.plot(time_data, grf_data/(9.81*10))
 plt.title("Vertical Ground Reaction Force Over Time")
 plt.xlabel("Time (s)")
-plt.ylabel("()")
+plt.ylabel("(BW)")
 plt.show()
+
+# plot the applied_Force values
+plt.figure(figsize=(10, 6))
+for run_data in all_simulation_results:
+    time_data = np.array(run_data['time'])
+    external_force_values = np.array(run_data['external_applied_force'])
+    plt.plot(time_data, external_force_values)
+plt.title("Applied Force Pulse into mujoco")
+plt.xlabel("Time (s)")
+plt.ylabel("Force (N)")
+plt.legend()
+plt.show()
+
 
 # plot force_values applied at each timestep
 plt.figure(figsize=(10, 6))
 time_steps = np.arange(0, phase_durations[2], model.opt.timestep)
 plt.plot(time_steps, force_values, label='Applied Force Pulse')
-plt.title("Applied Force Pulse Over Time")
+plt.title("Defined Applied Force outside mujoco")
 plt.xlabel("Time (s)")
 plt.ylabel("Force (N)")
 plt.legend()
 plt.show()
+
+
 
 
 
