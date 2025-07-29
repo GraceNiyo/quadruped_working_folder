@@ -84,9 +84,9 @@
   </tendon>
 
   <actuator>
-    <muscle name="T_RB_M0" tendon="T_RB_M0" lengthrange="0.459547 0.768536" lmin = "0.74" lmax = "1.24" vmax ="0.62" force = "500" fpmax = "1.5" fvmax = "1.2"/>
-    <muscle name="T_RB_M1" tendon="T_RB_M1" lengthrange="0.336191 0.466032" lmin = "0.84" lmax = "1.14" vmax ="0.41" force = "500" fpmax = "1.5" fvmax = "1.2"/>
-    <muscle name="T_RB_M2" tendon="T_RB_M2" lengthrange="0.575756 0.863523" lmin = "0.82" lmax = "1.24" vmax ="0.7"  force = "1000" fpmax = "1.5" fvmax = "1.2"/>
+    <muscle name="T_RB_M0" tendon="T_RB_M0" lengthrange="0.459547 0.768536" range = "0.5 1.5" lmin = "0.5" lmax = "1.5" vmax ="1.6" force = "250" fpmax = "1.3" fvmax = "1.2"/>
+    <muscle name="T_RB_M1" tendon="T_RB_M1" lengthrange="0.336191 0.466032" range = "0.5 1.5" lmin = "0.5" lmax = "1.5" vmax ="1.6" force = "250" fpmax = "1.3" fvmax = "1.2"/>
+    <muscle name="T_RB_M2" tendon="T_RB_M2" lengthrange="0.575756 0.863523" range = "0.5 1.5" lmin = "0.5" lmax = "1.5" vmax ="1.6"  force = "500" fpmax = "1.3" fvmax = "1.2"/>
   </actuator>
 
   <sensor>

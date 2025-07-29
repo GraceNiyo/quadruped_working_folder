@@ -19,18 +19,18 @@ except ImportError:
 
 # --- Configuration Parameters ---
 path_to_model = '../Working_Folder/single_leg_experiment/single_leg.xml'
-base_data_dir = '../all_data/single_leg_experiment/single_leg_model/hard_floor/smoothstep_force_1'
+base_data_dir = '../all_data/single_leg_experiment/single_leg_model/debugging_muscle_spindle/initial_activated'
 os.makedirs(base_data_dir, exist_ok=True)
 
 # Muscle activation levels (M0, M1, M2)
-M0 = 0.1
-M1 = 0.2
-M2 = 0.4
+M0 = 0.3
+M1 = 0.1
+M2 = 0.3
 muscle_activations = np.array([M0, M1, M2])
 
 
 # Apply force from 0 N down to -10 N (in z-direction)
-force_vector = np.arange(0,-3,-1)
+force_vector = np.arange(0,-5,-1)
 
 
 # --- Model Loading and Initialization ---
@@ -107,8 +107,8 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
         force_values = generate_smooth_force_profile(
             duration=phase_durations[2],  # Duration of the force pulse
             timestep=model.opt.timestep,
-            rise_time=1,  # Time to reach peak force
-            decay_time=0.,  # Time to decay to zero force
+            rise_time=0.2,  # Time to reach peak force
+            decay_time=0.2,  # Time to decay to zero force
             peak_force=f  # Peak force in Newtons (negative for downward force)
         )
 
@@ -131,7 +131,11 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
             'global_com': [],
             'ground_contact_force': [],
             'time': [],
-            'external_applied_force': []  # Store external applied force
+            'external_applied_force': [],
+            'muscle_activation':[],
+            'muscle_length': [],
+            'muscle_velocity': [],
+            'muscle_force': []
         }
 
         total_steps = int(total_sim_duration / model.opt.timestep) + 1 # Add 1 to ensure last step is included
@@ -191,6 +195,10 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
             run_data['global_com'].append(compute_global_com.com(model, data))
             run_data['ground_contact_force'].append(contact_force.copy())
             run_data['time'].append(data.time)
+            run_data['muscle_activation'].append(data.ctrl.copy())
+            run_data['muscle_length'].append(data.actuator_length.copy())
+            run_data['muscle_velocity'].append(data.actuator_velocity.copy())
+            run_data['muscle_force'].append(data.actuator_force.copy())
 
 
             # syncronize to model real_time simulation
@@ -202,26 +210,26 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
             # else: # warning if simulation is running slower than real-time
             #     print(f"Warning: Simulation step {step_count} exceeded the defined timestep! ({time_elapsed_real:.4f}s vs {model.opt.timestep:.4f}s)")
 
-        base_filename = f"force_{abs(f)}"
-            # save each data array to a separate .txt file
-        for data_key, data_list in run_data.items():
-            # Skip 'force' and 'gain' as they are part of the filename
-            if data_key in ['force']:
-                continue
+#         base_filename = f"force_{abs(f)}"
+#             # save each data array to a separate .txt file
+#         for data_key, data_list in run_data.items():
+#             # Skip 'force' and 'gain' as they are part of the filename
+#             if data_key in ['force']:
+#                 continue
 
-            # Convert list of arrays to a single NumPy array for saving
-            # Handle scalar data (like touch_sensor if it's a single value per step)
-            if isinstance(data_list[0], (float, int, np.ndarray)) and np.ndim(data_list[0]) == 0:
-                data_to_save = np.array(data_list).reshape(-1, 1) # Reshape to a column vector
-            else:
-                data_to_save = np.array(data_list)
+#             # Convert list of arrays to a single NumPy array for saving
+#             # Handle scalar data (like touch_sensor if it's a single value per step)
+#             if isinstance(data_list[0], (float, int, np.ndarray)) and np.ndim(data_list[0]) == 0:
+#                 data_to_save = np.array(data_list).reshape(-1, 1) # Reshape to a column vector
+#             else:
+#                 data_to_save = np.array(data_list)
 
-            file_path = os.path.join(base_data_dir, f"{base_filename}_{data_key}.txt")
-            np.savetxt(file_path, data_to_save, fmt='%.8f', delimiter='\t') # Using tab delimiter for MATLAB
-            print(f"Saved {data_key} to {file_path}")
-        # Optionally, keep the data in all_simulation_results if you need it in memory for further processing
-        all_simulation_results.append(run_data)
+#             file_path = os.path.join(base_data_dir, f"{base_filename}_{data_key}.txt")
+#             np.savetxt(file_path, data_to_save, fmt='%.8f', delimiter='\t') # Using tab delimiter for MATLAB
+#             print(f"Saved {data_key} to {file_path}")
+#         # Optionally, keep the data in all_simulation_results if you need it in memory for further processing
+#         all_simulation_results.append(run_data)
 
-print("\nAll simulations completed.")
-print(f"Total {len(all_simulation_results)} simulation runs performed.")
-print(f"All data saved to: {base_data_dir}")
+# print("\nAll simulations completed.")
+# print(f"Total {len(all_simulation_results)} simulation runs performed.")
+# print(f"All data saved to: {base_data_dir}")
