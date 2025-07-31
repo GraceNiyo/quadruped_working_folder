@@ -1,76 +1,84 @@
-MuJoCo version 3.2.3
+MuJoCo version 3.3.0
 model name     monopod model
 
-nq                    4
-nv                    4
-nu                    3
-na                    3
-nbody                 5
-nbvh                  9
-nbvhstatic            9
-njnt                  4
-ngeom                 7
-nsite                 13
-ncam                  1
-nlight                1
-ntex                  3
-ntexdata              500322
-nmat                  2
-ntendon               3
-nwrap                 13
-nsensor               1
-nuser_geom            1
-nnames                392
-npaths                1
-nnames_map            86
-nM                    10
-nB                    20
-nC                    16
-nD                    16
-njmax                 -1
-nconmax               -1
-ntree                 1
-nsensordata           1
-narena                6291456
-nbuffer               520257
+MEMORY
+  total         500.8 KB
+  textures      488.6 KB
 
-timestep              0.001   
-apirate               1e+02   
-impratio              1       
-tolerance             1e-08   
-ls_tolerance          0.01    
-noslip_tolerance      1e-06   
-ccd_tolerance         1e-06   
-density               0       
-viscosity             0       
-o_margin              0       
-integrator            3
-cone                  0
-jacobian              2
-solver                2
-iterations            100
-ls_iterations         50
-noslip_iterations     0
-ccd_iterations        50
-disableflags          0
-enableflags           0
-disableactuator       0
-sdf_initpoints        40
-sdf_iterations        10
-gravity               0         0        -9.8      
-wind                  0         0         0        
-magnetic              0        -0.5       0        
-o_solref              0.02      1        
-o_solimp              0.9       0.95      0.001     0.5       2        
-o_friction            1         1         0.005     0.0001    0.0001   
+SIZES
+  nq                  4
+  nv                  4
+  nu                  3
+  na                  3
+  nbody               5
+  nbvh                9
+  nbvhstatic          9
+  njnt                4
+  ngeom               7
+  nsite               13
+  ncam                1
+  nlight              1
+  ntex                3
+  ntexdata            500322
+  nmat                2
+  ntendon             3
+  nwrap               13
+  nsensor             1
+  nuser_geom          1
+  nnames              392
+  npaths              1
+  nnames_map          86
+  nM                  10
+  nB                  20
+  nC                  10
+  nD                  16
+  nJmom               12
+  ntree               1
+  njmax               -1
+  nconmax             -1
+  nsensordata         1
+  narena              6291456
+  nbuffer             520257
+
+OPTION
+  timestep            0.001   
+  apirate             1e+02   
+  impratio            1       
+  tolerance           1e-08   
+  ls_tolerance        0.01    
+  noslip_tolerance    1e-06   
+  ccd_tolerance       1e-06   
+  density             0       
+  viscosity           0       
+  o_margin            0       
+  integrator          3
+  cone                0
+  jacobian            2
+  solver              2
+  iterations          100
+  ls_iterations       50
+  noslip_iterations   0
+  ccd_iterations      50
+  disableflags        0
+  enableflags         0
+  disableactuator     0
+  sdf_initpoints      40
+  sdf_iterations      10
+  gravity             0         0        -9.8      
+  wind                0         0         0        
+  magnetic            0        -0.5       0        
+  o_solref            0.02      1        
+  o_solimp            0.9       0.95      0.001     0.5       2        
+  o_friction          1         1         0.005     0.0001    0.0001   
 
 totalmass             5       
 
-meaninertia           2.6     
-meanmass              1.2     
-meansize              0.27    
-extent                8       
-center                0        0        0       
+STATISTIC
+  meaninertia         2.6     
+  meanmass            1.2     
+  meansize            0.27    
+  extent              8       
+  center              0        0        0       
 
 qpos0                 0         0         0         0        
 
@@ -385,7 +393,7 @@ GEOM 0:
   geom_plugin           -1 
   geom_sameframe        1 
   geom_solmix           1        
-  geom_solref           0.1       1        
+  geom_solref           0.05      1        
   geom_solimp           0         0.95      0.001     0.5       2        
   geom_size             40        40        40       
   geom_aabb             0         0        -5e+09     1e+10     1e+10     5e+09    
@@ -834,7 +842,7 @@ TENDON 0:
   tendon_solimp_fri     0.9       0.95      0.001     0.5       2        
   tendon_range          0         0        
   tendon_margin         0        
-  tendon_stiffness      2.5e+02  
+  tendon_stiffness      1e+03    
   tendon_damping        0        
   tendon_frictionloss   0        
   tendon_lengthspring   0.62      0.62     
@@ -864,7 +872,7 @@ TENDON 1:
   tendon_solimp_fri     0.9       0.95      0.001     0.5       2        
   tendon_range          0         0        
   tendon_margin         0        
-  tendon_stiffness      2.5e+02  
+  tendon_stiffness      1e+03    
   tendon_damping        0        
   tendon_frictionloss   0        
   tendon_lengthspring   0.41      0.41     
@@ -892,7 +900,7 @@ TENDON 2:
   tendon_solimp_fri     0.9       0.95      0.001     0.5       2        
   tendon_range          0         0        
   tendon_margin         0        
-  tendon_stiffness      2.5e+02  
+  tendon_stiffness      1e+03    
   tendon_damping        0        
   tendon_frictionloss   0        
   tendon_lengthspring   0.7       0.7      
@@ -923,8 +931,8 @@ ACTUATOR 0:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       0.01      0.04      0         0         0         0         0         0         0         0        
-  actuator_gainprm      0.5       1.5       2.5e+02   2e+02     0.5       1.5       1.6       1.3       1.2       0        
-  actuator_biasprm      0.5       1.5       2.5e+02   2e+02     0.5       1.5       1.6       1.3       1.2       0        
+  actuator_gainprm      0.5       1.5       1e+02     2e+02     0.5       1.5       1.6       1.3       1.2       0        
+  actuator_biasprm      0.5       1.5       1e+02     2e+02     0.5       1.5       1.6       1.3       1.2       0        
   actuator_actearly     0 
   actuator_ctrlrange    0         1        
   actuator_forcerange   0         0        
@@ -950,8 +958,8 @@ ACTUATOR 1:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       0.01      0.04      0         0         0         0         0         0         0         0        
-  actuator_gainprm      0.5       1.5       2.5e+02   2e+02     0.5       1.5       1.6       1.3       1.2       0        
-  actuator_biasprm      0.5       1.5       2.5e+02   2e+02     0.5       1.5       1.6       1.3       1.2       0        
+  actuator_gainprm      0.5       1.5       1e+02     2e+02     0.5       1.5       1.6       1.3       1.2       0        
+  actuator_biasprm      0.5       1.5       1e+02     2e+02     0.5       1.5       1.6       1.3       1.2       0        
   actuator_actearly     0 
   actuator_ctrlrange    0         1        
   actuator_forcerange   0         0        
@@ -977,8 +985,8 @@ ACTUATOR 2:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       0.01      0.04      0         0         0         0         0         0         0         0        
-  actuator_gainprm      0.5       1.5       5e+02     2e+02     0.5       1.5       1.6       1.3       1.2       0        
-  actuator_biasprm      0.5       1.5       5e+02     2e+02     0.5       1.5       1.6       1.3       1.2       0        
+  actuator_gainprm      0.5       1.5       2.5e+02   2e+02     0.5       1.5       1.6       1.3       1.2       0        
+  actuator_biasprm      0.5       1.5       2.5e+02   2e+02     0.5       1.5       1.6       1.3       1.2       0        
   actuator_actearly     0 
   actuator_ctrlrange    0         1        
   actuator_forcerange   0         0        

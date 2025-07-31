@@ -8,7 +8,7 @@ Summary:
 
 import numpy as np
 
-def gamma_driven_spindle_model_(actuator_length, actuator_velocity, actuator_lengthrange, vmax, gamma_static = None, gamma_dynamic = None, beta_drive = None, muscle_lengthrange=(0.5, 1.5)):
+def gamma_driven_spindle_model_(actuator_length, actuator_velocity, actuator_lengthrange, vmax = 1.6, gamma_static = None, gamma_dynamic = None, beta_drive = None, muscle_lengthrange=(0.5, 1.5)):
 
     """
     Args: 
@@ -116,7 +116,6 @@ if __name__ == "__main__":
             actuator_length=current_actuator_length,
             actuator_velocity=current_actuator_velocity,
             actuator_lengthrange=test_muscle_params["lengthrange"],
-            vmax=test_muscle_params["vmax"],
             beta_drive=beta_level,
             muscle_lengthrange=test_muscle_params["muscle_lengthrange"]
         )
