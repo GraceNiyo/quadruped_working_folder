@@ -127,8 +127,8 @@ if __name__ == "__main__":
 
     # Scenario 2: Using Separate Gamma Drives
     print("\n--- Scenario 2: Using Separate Gamma Drives ---")
-    gamma_s_level = 0.8
-    gamma_d_level = 0.2
+    gamma_s_level = 0
+    gamma_d_level = 0
     try:
         ia_gamma, ii_gamma = gamma_driven_spindle_model_(
             actuator_length=current_actuator_length,

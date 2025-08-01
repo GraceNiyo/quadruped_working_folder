@@ -16,7 +16,7 @@ import compute_ground_reaction_force as compute_grf
 
 # --- Configuration Parameters ---
 path_to_model = '../Working_Folder/single_leg_experiment/single_leg.xml'
-base_data_dir = '../all_data/single_leg_experiment/single_leg_model/debugging_muscle_spindle/beta_drive'
+base_data_dir = '../all_data/single_leg_experiment/Simulation_07_31_2025/beta_drive/'
 os.makedirs(base_data_dir, exist_ok=True)
 
 # Muscle activation levels (M0, M1, M2)
@@ -24,7 +24,7 @@ M0 = 0.3
 M1 = 0.1
 M2 = 0.32
 muscle_activations = np.array([M0, M1, M2])
-beta_signal =  muscle_activations.copy()
+beta_signal =  muscle_activations.copy() # Initialize beta_signal as extrafusal muscle activations
 
 
 all_simulation_results = []
@@ -32,9 +32,9 @@ all_simulation_results = []
 # durations for each new phase
 phase_durations = [
     2.0, # Phase 1: Only muscle activation, no external force (0 to 2s)
-    3.0, # Phase 2: Muscle activation + Ia feedback, no external force (2 to 5s)
+    # 3.0, # Phase 2: Muscle activation + Ia feedback, no external force (2 to 5s)
     1.0, # Phase 3: Muscle activation + Ia feedback + external force (the pulse) (5 to 6s)
-    3.0, # Phase 4: Muscle activation + Ia feedback, no external force (6 to 9s)
+    2.0, # Phase 4: Muscle activation + Ia feedback, no external force (6 to 9s)
     2.0  # Phase 5: Only muscle activation, no external force (9 to 11s)
 ]
 
@@ -45,7 +45,7 @@ total_sim_duration = cumulative_times[-1]
 
 
 # Apply force from 0 N down to -10 N (in z-direction)
-force_vector = np.arange(0,-5,-1)
+force_vector = np.arange(0,-2.2,-0.2)
 
 
 # --- Model Loading and Initialization ---
@@ -105,8 +105,8 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
         force_values = generate_smooth_force_profile(
             duration=phase_durations[2],  # Duration of the force pulse
             timestep=model.opt.timestep,
-            rise_time=0.2,  # Time to reach peak force
-            decay_time=0.2,  # Time to decay to zero force
+            rise_time=0.1,  # Time to reach peak force
+            decay_time=0.1,  # Time to decay to zero force
             peak_force=f  # Peak force in Newtons (negative for downward force)
         )
 
@@ -124,8 +124,8 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
             'force': f,
             'joint_position': [],
             'joint_velocity': [],
-            'trunk_position': [],
-            'global_com': [],
+            'com_velocity': [],
+            'com_position': [], 
             'ground_contact_force': [],
             'time': [],
             'external_applied_force': [],
@@ -159,30 +159,12 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
 
             # --- Simulation Phase Logic ---
 
-            if current_sim_time_relative < cumulative_times[0]: # Phase 1: 0 to 2 seconds
+            if current_sim_time_relative < cumulative_times[0]: 
+                # Only muscle activation, no external force
                 data.ctrl[:] = muscle_activations
                 data.qfrc_applied[:] = 0.0 
-            elif current_sim_time_relative < cumulative_times[1]: # Phase 2: 2 to 5 seconds
-                # Muscle activation + Ia feedback, no external force
-                for m in range(model.nu): # Calculate Ia feedback using the spindle model
-                    current_actuator_length = data.actuator_length[m]
-                    current_actuator_velocity = data.actuator_velocity[m]
-                    muscle_tendon_lengthrange = model.actuator_lengthrange[m].tolist()  # as a list
 
-                    Ia_feedback, II_feedback = gamma_driven_spindle_model_(
-                        actuator_length=current_actuator_length,
-                        actuator_velocity=current_actuator_velocity,
-                        actuator_lengthrange=muscle_tendon_lengthrange,
-                        beta_drive = beta_signal[m]
-                    )
-                    Ia_a[m] = Ia_feedback
-                    II_a[m] = II_feedback
-
-                beta_signal = np.clip(beta_signal + Ia_a + II_a, 0, 1)  # Update beta_signal based on Ia and II feedback
-
-                data.ctrl[:] =  np.clip(muscle_activations + Ia_a + II_a, 0, 1)
-                data.qfrc_applied[:] = 0.0 
-            elif current_sim_time_relative < cumulative_times[2]: # Phase 3: 5 to 6 seconds
+            elif current_sim_time_relative < cumulative_times[1]: 
                 # Muscle activation + Ia feedback + external force pulse
 
                 for m in range(model.nu): # Calculate Ia feedback using the spindle model
@@ -203,17 +185,17 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                     II_a[m] = II_feedback
 
                 # Apply the external force pulse
-                force_index = int((current_sim_time_relative - cumulative_times[1]) / model.opt.timestep)
+                force_index = int((current_sim_time_relative - cumulative_times[0]) / model.opt.timestep)
                 if force_index >= len(force_values):
                     force_index = len(force_values) - 1
 
                 applied_force = np.array([0, 0, force_values[force_index]]) 
                 
-                beta_signal = np.clip(beta_signal + Ia_a + II_a, 0, 1)  # Update beta_signal based on Ia and II feedback
+                beta_signal = np.clip(muscle_activations + Ia_a + II_a, 0, 1)  # Update beta_signal based on Ia and II feedback
                 data.ctrl[:] = np.clip(muscle_activations + Ia_a + II_a, 0, 1)
                 mujoco.mj_applyFT(model, data, applied_force, torque, force_location_on_model, body_id, data.qfrc_applied)
 
-            elif current_sim_time_relative < cumulative_times[3]: # Phase 4: 6 to 9 seconds
+            elif current_sim_time_relative < cumulative_times[2]: 
                 # Muscle activation + Ia feedback, no external force
                 for m in range(model.nu): # Calculate Ia feedback using the spindle model
                     
@@ -231,12 +213,11 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
                     Ia_a[m] = Ia_feedback
                     II_a[m] = II_feedback
 
-                beta_signal = np.clip(beta_signal + Ia_a + II_a, 0, 1)  
+                beta_signal = np.clip(muscle_activations + Ia_a + II_a, 0, 1)  
                 data.ctrl[:] =   np.clip(muscle_activations + Ia_a + II_a, 0, 1)
                 data.qfrc_applied[:] = 0.0 # No external force
 
-            else: # Phase 5: 9 to 11 seconds (and beyond, until total_steps is reached)
-                # Only muscle activation, no external force
+            else: # Only muscle activation, no external force
                 data.ctrl[:] = muscle_activations
                 data.qfrc_applied[:] = 0.0
 
@@ -251,8 +232,8 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
             run_data['external_applied_force'].append(applied_force)
             run_data['joint_position'].append(data.qpos.copy())
             run_data['joint_velocity'].append(data.qvel.copy())
-            run_data['trunk_position'].append(data.xpos[torso_id].copy())
-            run_data['global_com'].append(compute_global_com.com(model, data))
+            run_data['com_velocity'].append(data.cvel[torso_id].copy())
+            run_data['com_position'].append(data.subtree_com[torso_id].copy())
             run_data['ground_contact_force'].append(contact_force.copy())
             run_data['time'].append(data.time)
             run_data['muscle_activation'].append(data.ctrl.copy())
@@ -272,7 +253,7 @@ with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui
             # else: # warning if simulation is running slower than real-time
             #     print(f"Warning: Simulation step {step_count} exceeded the defined timestep! ({time_elapsed_real:.4f}s vs {model.opt.timestep:.4f}s)")
 
-        base_filename = f"beta_drive_force_{abs(f)}"
+        base_filename = f"beta_drive_force_{abs(f):.1f}"
             # save each data array to a separate .txt file
         for data_key, data_list in run_data.items():
             if data_key in ['force', 'beta_drive']:

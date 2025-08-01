@@ -49,8 +49,8 @@ def generate_smooth_force_profile(
 if __name__ == "__main__":
     duration = 1.0  # Total simulation time in seconds
     timestep = 0.005  # Time step for the simulation
-    rise_time = 0.0625  # Time to reach peak force
-    decay_time = 0.0625  # Time to decay to zero force
+    rise_time = 0.1  # Time to reach peak force
+    decay_time = 0.1  # Time to decay to zero force
     peak_force = -1.0  # Peak force in Newtons (negative for downward force)
     
 
